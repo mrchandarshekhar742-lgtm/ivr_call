@@ -193,6 +193,11 @@ let audioFiles = [
     processing: {
       status: 'ready'
     },
+    usage: {
+      campaignCount: 3,
+      totalPlays: 45,
+      lastUsed: new Date().toISOString()
+    },
     uploadedBy: 1,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -214,6 +219,11 @@ let audioFiles = [
     },
     processing: {
       status: 'ready'
+    },
+    usage: {
+      campaignCount: 1,
+      totalPlays: 12,
+      lastUsed: new Date().toISOString()
     },
     uploadedBy: 1,
     createdAt: new Date().toISOString(),
@@ -1350,6 +1360,11 @@ app.post('/api/audio/upload', authenticateToken, upload.single('audioFile'), (re
     },
     processing: {
       status: 'ready'
+    },
+    usage: {
+      campaignCount: 0,
+      totalPlays: 0,
+      lastUsed: null
     },
     uploadedBy: req.user.id,
     createdAt: new Date().toISOString(),
