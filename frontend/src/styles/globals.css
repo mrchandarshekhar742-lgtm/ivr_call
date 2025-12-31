@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+  
+  * {
+    @apply border-gray-200;
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-gray-700 border-gray-300 hover:bg-gray-50 focus:ring-blue-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+  
+  .btn-warning {
+    @apply btn bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500;
+  }
+  
+  .btn-error {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  /* Card Components */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 bg-gray-50;
+  }
+  
+  .card-body {
+    @apply px-6 py-4;
+  }
+  
+  .card-footer {
+    @apply px-6 py-4 border-t border-gray-200 bg-gray-50;
+  }
+
+  /* Form Components */
+  .form-input {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+  }
+  
+  .form-select {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+  }
+  
+  .form-textarea {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  .form-error {
+    @apply mt-1 text-sm text-red-600;
+  }
+
+  /* Status Components */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .status-success {
+    @apply status-badge bg-green-100 text-green-800;
+  }
+  
+  .status-warning {
+    @apply status-badge bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-error {
+    @apply status-badge bg-red-100 text-red-800;
+  }
+  
+  .status-info {
+    @apply status-badge bg-blue-100 text-blue-800;
+  }
+
+  /* Loading Components */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
+  }
+
+  /* Table Components */
+  .table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+  
+  .table-header {
+    @apply bg-gray-50;
+  }
+  
+  .table-header-cell {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+  
+  .table-body {
+    @apply bg-white divide-y divide-gray-200;
+  }
+  
+  .table-row {
+    @apply hover:bg-gray-50;
+  }
+  
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+  }
+}
+
+@layer utilities {
+  /* Custom color utilities */
+  .text-primary-50 { color: #eff6ff; }
+  .text-primary-100 { color: #dbeafe; }
+  .text-primary-200 { color: #bfdbfe; }
+  .text-primary-300 { color: #93c5fd; }
+  .text-primary-400 { color: #60a5fa; }
+  .text-primary-500 { color: #3b82f6; }
+  .text-primary-600 { color: #2563eb; }
+  .text-primary-700 { color: #1d4ed8; }
+  .text-primary-800 { color: #1e40af; }
+  .text-primary-900 { color: #1e3a8a; }
+
+  .bg-primary-50 { background-color: #eff6ff; }
+  .bg-primary-100 { background-color: #dbeafe; }
+  .bg-primary-200 { background-color: #bfdbfe; }
+  .bg-primary-300 { background-color: #93c5fd; }
+  .bg-primary-400 { background-color: #60a5fa; }
+  .bg-primary-500 { background-color: #3b82f6; }
+  .bg-primary-600 { background-color: #2563eb; }
+  .bg-primary-700 { background-color: #1d4ed8; }
+  .bg-primary-800 { background-color: #1e40af; }
+  .bg-primary-900 { background-color: #1e3a8a; }
+
+  .text-success-50 { color: #ecfdf5; }
+  .text-success-100 { color: #d1fae5; }
+  .text-success-200 { color: #a7f3d0; }
+  .text-success-300 { color: #6ee7b7; }
+  .text-success-400 { color: #34d399; }
+  .text-success-500 { color: #10b981; }
+  .text-success-600 { color: #059669; }
+  .text-success-700 { color: #047857; }
+  .text-success-800 { color: #065f46; }
+  .text-success-900 { color: #064e3b; }
+
+  .bg-success-50 { background-color: #ecfdf5; }
+  .bg-success-100 { background-color: #d1fae5; }
+  .bg-success-200 { background-color: #a7f3d0; }
+  .bg-success-300 { background-color: #6ee7b7; }
+  .bg-success-400 { background-color: #34d399; }
+  .bg-success-500 { background-color: #10b981; }
+  .bg-success-600 { background-color: #059669; }
+  .bg-success-700 { background-color: #047857; }
+  .bg-success-800 { background-color: #065f46; }
+  .bg-success-900 { background-color: #064e3b; }
+
+  .text-warning-50 { color: #fffbeb; }
+  .text-warning-100 { color: #fef3c7; }
+  .text-warning-200 { color: #fde68a; }
+  .text-warning-300 { color: #fcd34d; }
+  .text-warning-400 { color: #fbbf24; }
+  .text-warning-500 { color: #f59e0b; }
+  .text-warning-600 { color: #d97706; }
+  .text-warning-700 { color: #b45309; }
+  .text-warning-800 { color: #92400e; }
+  .text-warning-900 { color: #78350f; }
+
+  .bg-warning-50 { background-color: #fffbeb; }
+  .bg-warning-100 { background-color: #fef3c7; }
+  .bg-warning-200 { background-color: #fde68a; }
+  .bg-warning-300 { background-color: #fcd34d; }
+  .bg-warning-400 { background-color: #fbbf24; }
+  .bg-warning-500 { background-color: #f59e0b; }
+  .bg-warning-600 { background-color: #d97706; }
+  .bg-warning-700 { background-color: #b45309; }
+  .bg-warning-800 { background-color: #92400e; }
+  .bg-warning-900 { background-color: #78350f; }
+
+  .text-error-50 { color: #fef2f2; }
+  .text-error-100 { color: #fee2e2; }
+  .text-error-200 { color: #fecaca; }
+  .text-error-300 { color: #fca5a5; }
+  .text-error-400 { color: #f87171; }
+  .text-error-500 { color: #ef4444; }
+  .text-error-600 { color: #dc2626; }
+  .text-error-700 { color: #b91c1c; }
+  .text-error-800 { color: #991b1b; }
+  .text-error-900 { color: #7f1d1d; }
+
+  .bg-error-50 { background-color: #fef2f2; }
+  .bg-error-100 { background-color: #fee2e2; }
+  .bg-error-200 { background-color: #fecaca; }
+  .bg-error-300 { background-color: #fca5a5; }
+  .bg-error-400 { background-color: #f87171; }
+  .bg-error-500 { background-color: #ef4444; }
+  .bg-error-600 { background-color: #dc2626; }
+  .bg-error-700 { background-color: #b91c1c; }
+  .bg-error-800 { background-color: #991b1b; }
+  .bg-error-900 { background-color: #7f1d1d; }
+
+  /* Animation utilities */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
