@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # IVR Backend API
+  ivr-backend:
+    build: .
+    container_name: ivr-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - FRONTEND_URL=https://your-domain.com
+    volumes:
+      - ./backend/uploads:/app/backend/uploads
+      - ./backend/logs:/app/backend/logs
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - ivr-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: ivr-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ivr-network
+
+  # MySQL Database (Optional)
+  mysql:
+    image: mysql:8.0
+    container_name: ivr-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_secure_root_password
+      - MYSQL_DATABASE=ivr_system_prod
+      - MYSQL_USER=ivr_user
+      - MYSQL_PASSWORD=your_secure_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ivr-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: ivr-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - ivr-backend
+    networks:
+      - ivr-network
+
+volumes:
+  redis_data:
+  mysql_data:
+
+networks:
+  ivr-network:
+    driver: bridge

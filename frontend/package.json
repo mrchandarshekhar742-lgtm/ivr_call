@@ -1,13 +1,18 @@
 {
   "name": "ivr-frontend",
   "version": "1.0.0",
-  "description": "IVR System Frontend Dashboard",
+  "description": "IVR Call Management System - Production Frontend Dashboard",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "export": "next export",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "analyze": "ANALYZE=true next build",
+    "prod": "NODE_ENV=production next start"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -38,5 +43,20 @@
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
     "typescript": "^5.2.0"
+  },
+  "keywords": [
+    "ivr",
+    "call-management",
+    "dashboard",
+    "nextjs",
+    "react",
+    "typescript",
+    "production"
+  ],
+  "author": "IVR System Developer",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }
