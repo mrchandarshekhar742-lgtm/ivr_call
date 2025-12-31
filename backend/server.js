@@ -19,10 +19,13 @@ const io = socketIo(server, {
   cors: {
     origin: [
       process.env.FRONTEND_URL || "http://localhost:3000",
-      "http://localhost:3001"
+      "http://localhost:3001",
+      "http://localhost:3000"
     ],
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  allowEIO3: true
 });
 
 // Make io available to routes
@@ -181,6 +184,15 @@ let audioFiles = [
     size: 1024000,
     url: '/uploads/audio/test-welcome.txt',
     category: 'welcome',
+    description: 'Welcome message for IVR system',
+    tags: ['welcome', 'greeting'],
+    file: {
+      size: 1024000,
+      duration: 30
+    },
+    processing: {
+      status: 'ready'
+    },
     uploadedBy: 1,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -194,6 +206,15 @@ let audioFiles = [
     size: 856000,
     url: '/uploads/audio/survey-intro.txt',
     category: 'survey',
+    description: 'Introduction message for surveys',
+    tags: ['survey', 'intro'],
+    file: {
+      size: 856000,
+      duration: 25
+    },
+    processing: {
+      status: 'ready'
+    },
     uploadedBy: 1,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -1320,6 +1341,16 @@ app.post('/api/audio/upload', authenticateToken, upload.single('audioFile'), (re
     mimeType: req.file.mimetype,
     size: req.file.size,
     url: `/uploads/audio/${req.file.filename}`,
+    category: req.body.category || 'general',
+    description: req.body.description || '',
+    tags: req.body.tags ? req.body.tags.split(',').map(tag => tag.trim()) : [],
+    file: {
+      size: req.file.size,
+      duration: null // Will be calculated later
+    },
+    processing: {
+      status: 'ready'
+    },
     uploadedBy: req.user.id,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
