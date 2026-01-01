@@ -18,10 +18,10 @@ import { toast } from 'react-hot-toast';
 
 interface AudioCardProps {
   audio: AudioFile;
-  onPlay: (id: string) => void;
-  onPause: (id: string) => void;
-  onDownload: (id: string) => void;
-  onDelete: (id: string) => void;
+  onPlay: (id: string | number) => void;
+  onPause: (id: string | number) => void;
+  onDownload: (id: string | number) => void;
+  onDelete: (id: string | number) => void;
   isPlaying: boolean;
 }
 
@@ -200,24 +200,24 @@ export default function AudioPage() {
     },
   });
 
-  const handlePlay = (id: string) => {
-    setPlayingId(id);
+  const handlePlay = (id: string | number) => {
+    setPlayingId(String(id));
     console.log('Playing audio:', id);
     // TODO: Implement audio playback
   };
 
-  const handlePause = (id: string) => {
+  const handlePause = (id: string | number) => {
     setPlayingId(null);
     console.log('Pausing audio:', id);
     // TODO: Implement audio pause
   };
 
-  const handleDownload = (id: string) => {
+  const handleDownload = (id: string | number) => {
     console.log('Downloading audio:', id);
     // TODO: Implement audio download
-    const audio = audioFiles.find(a => a.id === id);
-    if (audio && audio.file.url) {
-      window.open(audio.file.url, '_blank');
+    const audio = audioFiles.find(a => String(a.id) === String(id));
+    if (audio && audio.url) {
+      window.open(audio.url, '_blank');
     }
   };
 
@@ -267,9 +267,9 @@ export default function AudioPage() {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string | number) => {
     if (confirm('Are you sure you want to delete this audio file?')) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(String(id));
     }
   };
 
@@ -368,7 +368,7 @@ export default function AudioPage() {
                 onPause={handlePause}
                 onDownload={handleDownload}
                 onDelete={handleDelete}
-                isPlaying={playingId === audio.id}
+                isPlaying={playingId === String(audio.id)}
               />
             ))
           )}
