@@ -1,0 +1,6 @@
+{
+  "name": "IVRCallManager",
+  "displayName": "IVR Call Manager",
+  "version": "1.0.0",
+  "description": "Android device controller for IVR call management system"
+}
