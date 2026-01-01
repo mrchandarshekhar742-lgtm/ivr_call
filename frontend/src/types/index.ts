@@ -1,7 +1,7 @@
 // Basic types for the IVR system
 
 export interface User {
-  id: string;
+  id: string | number;
   name: string;
   firstName?: string;
   lastName?: string;
@@ -41,54 +41,88 @@ export interface AuthResponse {
 }
 
 export interface Campaign {
-  id: string;
+  id: string | number;
   name: string;
   description?: string;
   status: 'draft' | 'running' | 'paused' | 'completed';
   type: 'bulk' | 'scheduled' | 'triggered';
-  audioFileId?: string;
+  audioFileId?: string | number;
   audioFile?: AudioFile;
   contactListId?: string;
+  contacts?: Contact[];
+  contactCount?: number;
+  completedCalls?: number;
+  successfulCalls?: number;
+  failedCalls?: number;
   ivrFlow?: IVRFlow;
   scheduledAt?: string;
+  createdBy?: number;
   createdAt: string;
   updatedAt: string;
   stats?: CampaignStats;
 }
 
 export interface Contact {
-  id: string;
+  id: string | number;
   name: string;
   phone: string;
   email?: string;
   status: 'active' | 'inactive' | 'pending' | 'called' | 'failed';
+  tags?: string[];
   metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface AudioFile {
-  id: string;
+  id: string | number;
   name: string;
   filename: string;
   originalName: string;
   mimeType: string;
   size: number;
-  duration?: number;
   url: string;
+  category: string;
+  description?: string;
+  tags: string[];
+  file: {
+    size: number;
+    duration: number | null;
+  };
+  processing: {
+    status: string;
+  };
+  usage: {
+    campaignCount: number;
+    totalPlays: number;
+    lastUsed: string | null;
+  };
+  uploadedBy: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CallLog {
-  id: string;
-  campaignId: string;
-  contactId: string;
-  callSid: string;
-  sessionId: string;
-  call: CallData;
-  flow: CallFlow;
-  provider: ProviderData;
+  id: string | number;
+  campaignId: string | number;
+  contactId: string | number;
+  deviceId?: string;
+  callSid?: string;
+  sessionId?: string;
+  call: {
+    status: 'completed' | 'failed' | 'busy' | 'no-answer';
+    duration: number;
+    startTime: string;
+    endTime?: string;
+  };
+  dtmfResponse?: {
+    key: string;
+    timestamp: string;
+    responseTime: number;
+  };
+  flow?: CallFlow;
+  provider?: ProviderData;
+  timestamp: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -203,6 +237,10 @@ export interface DashboardStats {
   completedToday: number;
   successRate: number;
   totalCampaigns: number;
+  totalContacts: number;
+  totalCalls: number;
+  successfulCalls: number;
+  failedCalls: number;
   campaigns: {
     total: number;
     running: number;
@@ -240,4 +278,20 @@ export interface DashboardStats {
     timestamp: string;
     status: string;
   }>;
+}
+
+// API Response Types
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
+}
+
+// Activity Item Type
+export interface ActivityItem {
+  id: number | string;
+  type: string;
+  message: string;
+  timestamp: string;
 }
