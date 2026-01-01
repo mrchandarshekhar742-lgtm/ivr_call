@@ -1384,7 +1384,143 @@ app.post('/api/audio/upload', authenticateToken, upload.single('audioFile'), (re
 
 // ==================== ANALYTICS ROUTES ====================
 
-// Get dashboard analytics
+// Get analytics overview
+app.get('/api/analytics/overview', authenticateToken, (req, res) => {
+  const userCampaigns = campaigns.filter(c => c.createdBy === req.user.id);
+  const userCallLogs = callLogs.filter(c => {
+    const campaign = campaigns.find(camp => camp.id === c.campaignId);
+    return campaign && campaign.createdBy === req.user.id;
+  });
+
+  const overview = {
+    totalCampaigns: userCampaigns.length,
+    activeCampaigns: userCampaigns.filter(c => c.status === 'running').length,
+    completedCampaigns: userCampaigns.filter(c => c.status === 'completed').length,
+    totalCalls: userCallLogs.length,
+    successfulCalls: userCallLogs.filter(c => c.call.status === 'completed').length,
+    failedCalls: userCallLogs.filter(c => c.call.status === 'failed').length,
+    averageCallDuration: userCallLogs.length > 0 ? 
+      userCallLogs.reduce((sum, call) => sum + (call.call.duration || 0), 0) / userCallLogs.length : 0,
+    successRate: userCallLogs.length > 0 ? 
+      (userCallLogs.filter(c => c.call.status === 'completed').length / userCallLogs.length * 100).toFixed(2) : 0
+  };
+
+  res.json({
+    success: true,
+    message: 'Analytics overview retrieved successfully',
+    data: overview
+  });
+});
+
+// Get campaign analytics
+app.get('/api/analytics/campaigns', authenticateToken, (req, res) => {
+  const userCampaigns = campaigns.filter(c => c.createdBy === req.user.id);
+  
+  const campaignAnalytics = userCampaigns.map(campaign => {
+    const campaignCalls = callLogs.filter(c => c.campaignId === campaign.id);
+    return {
+      id: campaign.id,
+      name: campaign.name,
+      status: campaign.status,
+      totalCalls: campaignCalls.length,
+      successfulCalls: campaignCalls.filter(c => c.call.status === 'completed').length,
+      failedCalls: campaignCalls.filter(c => c.call.status === 'failed').length,
+      successRate: campaignCalls.length > 0 ? 
+        (campaignCalls.filter(c => c.call.status === 'completed').length / campaignCalls.length * 100).toFixed(2) : 0,
+      createdAt: campaign.createdAt,
+      lastActivity: campaignCalls.length > 0 ? 
+        Math.max(...campaignCalls.map(c => new Date(c.timestamp).getTime())) : null
+    };
+  });
+
+  res.json({
+    success: true,
+    message: 'Campaign analytics retrieved successfully',
+    data: campaignAnalytics
+  });
+});
+
+// Get call analytics
+app.get('/api/analytics/calls', authenticateToken, (req, res) => {
+  const userCallLogs = callLogs.filter(c => {
+    const campaign = campaigns.find(camp => camp.id === c.campaignId);
+    return campaign && campaign.createdBy === req.user.id;
+  });
+
+  const callAnalytics = {
+    totalCalls: userCallLogs.length,
+    callsByStatus: {
+      completed: userCallLogs.filter(c => c.call.status === 'completed').length,
+      failed: userCallLogs.filter(c => c.call.status === 'failed').length,
+      busy: userCallLogs.filter(c => c.call.status === 'busy').length,
+      no_answer: userCallLogs.filter(c => c.call.status === 'no-answer').length
+    },
+    callsByHour: Array.from({length: 24}, (_, hour) => {
+      const hourCalls = userCallLogs.filter(call => {
+        const callHour = new Date(call.timestamp).getHours();
+        return callHour === hour;
+      });
+      return {
+        hour,
+        calls: hourCalls.length,
+        successful: hourCalls.filter(c => c.call.status === 'completed').length
+      };
+    }),
+    averageDuration: userCallLogs.length > 0 ? 
+      userCallLogs.reduce((sum, call) => sum + (call.call.duration || 0), 0) / userCallLogs.length : 0,
+    recentCalls: userCallLogs.slice(-10).reverse()
+  };
+
+  res.json({
+    success: true,
+    message: 'Call analytics retrieved successfully',
+    data: callAnalytics
+  });
+});
+
+// Get DTMF analytics
+app.get('/api/analytics/dtmf', authenticateToken, (req, res) => {
+  const userCallLogs = callLogs.filter(c => {
+    const campaign = campaigns.find(camp => camp.id === c.campaignId);
+    return campaign && campaign.createdBy === req.user.id;
+  });
+
+  const dtmfResponses = userCallLogs.filter(call => call.dtmfResponse).map(call => call.dtmfResponse);
+  
+  const dtmfAnalytics = {
+    totalResponses: dtmfResponses.length,
+    responseDistribution: {
+      '1': dtmfResponses.filter(r => r.key === '1').length,
+      '2': dtmfResponses.filter(r => r.key === '2').length,
+      '3': dtmfResponses.filter(r => r.key === '3').length,
+      '4': dtmfResponses.filter(r => r.key === '4').length,
+      '5': dtmfResponses.filter(r => r.key === '5').length,
+      '6': dtmfResponses.filter(r => r.key === '6').length,
+      '7': dtmfResponses.filter(r => r.key === '7').length,
+      '8': dtmfResponses.filter(r => r.key === '8').length,
+      '9': dtmfResponses.filter(r => r.key === '9').length,
+      '0': dtmfResponses.filter(r => r.key === '0').length,
+      '*': dtmfResponses.filter(r => r.key === '*').length,
+      '#': dtmfResponses.filter(r => r.key === '#').length
+    },
+    averageResponseTime: dtmfResponses.length > 0 ? 
+      dtmfResponses.reduce((sum, r) => sum + (r.responseTime || 0), 0) / dtmfResponses.length : 0,
+    mostCommonResponse: dtmfResponses.length > 0 ? 
+      Object.entries(dtmfResponses.reduce((acc, r) => {
+        acc[r.key] = (acc[r.key] || 0) + 1;
+        return acc;
+      }, {})).sort(([,a], [,b]) => b - a)[0]?.[0] : null,
+    recentResponses: dtmfResponses.slice(-10).reverse()
+  };
+
+  res.json({
+    success: true,
+    message: 'DTMF analytics retrieved successfully',
+    data: dtmfAnalytics
+  });
+});
+
+// Get dashboard analytics (legacy endpoint)
 app.get('/api/analytics/dashboard', authenticateToken, (req, res) => {
   const userCampaigns = campaigns.filter(c => c.createdBy === req.user.id);
   const userContacts = contacts.length;
