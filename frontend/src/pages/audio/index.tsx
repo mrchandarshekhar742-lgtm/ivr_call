@@ -57,8 +57,8 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
               <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(audio.category)}`}>
                 {audio.category}
               </span>
-              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(audio.processing.status)}`}>
-                {audio.processing.status}
+              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(audio.processing?.status || 'unknown')}`}>
+                {audio.processing?.status || 'unknown'}
               </span>
             </div>
             {audio.description && (
