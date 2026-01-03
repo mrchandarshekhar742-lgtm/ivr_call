@@ -103,9 +103,9 @@ export default function ContactsPage() {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string | number) => {
     if (confirm('Are you sure you want to delete this contact?')) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(Number(id));
     }
   };
 

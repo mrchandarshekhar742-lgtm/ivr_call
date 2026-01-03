@@ -19,6 +19,31 @@ import { formatNumber, formatPercentage } from '@/utils/format';
 import { useAuth } from '@/hooks/useAuth';
 import io from 'socket.io-client';
 
+interface RecentCall {
+  id: any;
+  phone: any;
+  campaignName: string;
+  status: string;
+  time: string;
+}
+
+interface RunningCampaign {
+  id: any;
+  name: string;
+  status: string;
+  totalContacts?: any;
+  startTime?: string;
+  progress?: number;
+}
+
+interface DashboardRealTimeStats {
+  activeCalls: number;
+  completedToday: number;
+  successRate: number;
+  runningCampaigns: RunningCampaign[];
+  recentCalls: RecentCall[];
+}
+
 interface StatCardProps {
   title: string;
   value: string | number;
@@ -222,12 +247,12 @@ function AndroidDeviceStatus() {
 }
 
 export default function DashboardPage() {
-  const [realTimeStats, setRealTimeStats] = useState({
+  const [realTimeStats, setRealTimeStats] = useState<DashboardRealTimeStats>({
     activeCalls: 0,
     completedToday: 0,
     successRate: 0,
-    runningCampaigns: [],
-    recentCalls: []
+    runningCampaigns: [] as RunningCampaign[],
+    recentCalls: [] as RecentCall[]
   });
   const [socket, setSocket] = useState<any>(null);
 
@@ -302,9 +327,6 @@ export default function DashboardPage() {
     refetchInterval: 30000, // Refetch every 30 seconds
     enabled: isAuthenticated, // Only run query when authenticated
     retry: 1, // Only retry once
-    onError: (error) => {
-      console.error('Dashboard API error:', error);
-    }
   });
 
   // Mock real-time updates (in production, this would come from WebSocket)

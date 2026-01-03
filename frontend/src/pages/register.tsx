@@ -31,7 +31,11 @@ const schema = yup.object({
     .required('Please confirm your password'),
 });
 
-type RegisterFormData = RegisterData & {
+type RegisterFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
   confirmPassword: string;
 };
 
@@ -63,7 +67,13 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      const { confirmPassword, ...registerData } = data;
+      const { confirmPassword, firstName, lastName, ...rest } = data;
+      const registerData: RegisterData = {
+        ...rest,
+        name: `${firstName} ${lastName}`,
+        firstName,
+        lastName
+      };
       const result = await registerUser(registerData);
       
       if (result?.success) {

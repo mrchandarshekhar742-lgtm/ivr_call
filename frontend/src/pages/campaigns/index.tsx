@@ -19,10 +19,10 @@ import { toast } from 'react-hot-toast';
 
 interface CampaignCardProps {
   campaign: Campaign;
-  onStart: (id: string) => void;
-  onPause: (id: string) => void;
-  onStop: (id: string) => void;
-  onDelete: (id: string) => void;
+  onStart: (id: string | number) => void;
+  onPause: (id: string | number) => void;
+  onStop: (id: string | number) => void;
+  onDelete: (id: string | number) => void;
 }
 
 function CampaignCard({ campaign, onStart, onPause, onStop, onDelete }: CampaignCardProps) {
@@ -111,7 +111,7 @@ function CampaignCard({ campaign, onStart, onPause, onStop, onDelete }: Campaign
             <div className="mt-2 flex items-center text-sm text-gray-500">
               <span>Created {formatDate(campaign.createdAt)}</span>
               <span className="mx-2">•</span>
-              <span>{formatNumber(campaign.contacts?.totalCount || 0)} contacts</span>
+              <span>{formatNumber(campaign.contactCount || campaign.contacts?.length || 0)} contacts</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -228,30 +228,30 @@ export default function CampaignsPage() {
     },
   });
 
-  const handleStart = (id: string) => {
-    startMutation.mutate(id);
+  const handleStart = (id: string | number) => {
+    startMutation.mutate(String(id));
   };
 
-  const handlePause = (id: string) => {
-    pauseMutation.mutate(id);
+  const handlePause = (id: string | number) => {
+    pauseMutation.mutate(String(id));
   };
 
-  const handleStop = (id: string) => {
-    stopMutation.mutate(id);
+  const handleStop = (id: string | number) => {
+    stopMutation.mutate(String(id));
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string | number) => {
     if (confirm('Are you sure you want to delete this campaign?')) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(String(id));
     }
   };
 
-  const filteredCampaigns = campaigns.filter(campaign => {
+  const filteredCampaigns = campaigns.filter((campaign: Campaign) => {
     if (filter === 'all') return true;
     return (campaign.status || 'draft') === filter;
   });
 
-  const statusCounts = campaigns.reduce((acc, campaign) => {
+  const statusCounts = campaigns.reduce((acc: Record<string, number>, campaign: Campaign) => {
     const status = campaign.status || 'draft';
     acc[status] = (acc[status] || 0) + 1;
     return acc;
@@ -327,7 +327,7 @@ export default function CampaignsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredCampaigns.map((campaign) => (
+            {filteredCampaigns.map((campaign: Campaign) => (
               <CampaignCard
                 key={campaign.id}
                 campaign={campaign}
