@@ -62,6 +62,18 @@ export interface Campaign {
   stats?: CampaignStats;
 }
 
+export interface CampaignFormData {
+  name: string;
+  description: string;
+  type: 'bulk' | 'scheduled' | 'triggered';
+  audioFileId: number;
+  priority: number;
+  maxConcurrentCalls: number;
+  retryAttempts: number;
+  retryInterval: number;
+  callTimeout: number;
+}
+
 export interface Contact {
   id: string | number;
   name: string;

@@ -8,6 +8,7 @@ import Layout from '@/components/Layout';
 import { apiClient } from '@/utils/api';
 import { toast } from 'react-hot-toast';
 import { PlayIcon, PauseIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline';
+import { CampaignFormData } from '@/types';
 
 const schema = yup.object({
   name: yup
@@ -51,18 +52,6 @@ const schema = yup.object({
     .max(1800, 'Call timeout cannot exceed 30 minutes')
     .required('Call timeout is required'),
 });
-
-interface CampaignFormData {
-  name: string;
-  description: string;
-  type: 'bulk' | 'scheduled' | 'triggered';
-  audioFileId: number;
-  priority: number;
-  maxConcurrentCalls: number;
-  retryAttempts: number;
-  retryInterval: number;
-  callTimeout: number;
-}
 
 export default function NewCampaignPage() {
   const [isLoading, setIsLoading] = useState(false);
