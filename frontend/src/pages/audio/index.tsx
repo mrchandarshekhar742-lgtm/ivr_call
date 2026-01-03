@@ -215,7 +215,7 @@ export default function AudioPage() {
   const handleDownload = (id: string | number) => {
     console.log('Downloading audio:', id);
     // TODO: Implement audio download
-    const audio = audioFiles.find(a => String(a.id) === String(id));
+    const audio = audioFiles.find((a: AudioFile) => String(a.id) === String(id));
     if (audio && audio.url) {
       window.open(audio.url, '_blank');
     }
@@ -273,7 +273,7 @@ export default function AudioPage() {
     }
   };
 
-  const filteredAudioFiles = audioFiles.filter(audio => {
+  const filteredAudioFiles = audioFiles.filter((audio: AudioFile) => {
     if (filter === 'all') return true;
     return audio.category === filter;
   });
