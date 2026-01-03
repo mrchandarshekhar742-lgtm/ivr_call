@@ -66,7 +66,32 @@ export interface CampaignFormData {
   name: string;
   description: string;
   type: 'bulk' | 'scheduled' | 'triggered';
+  audioFileId?: number; // Optional for edit form
+  priority: number;
+  maxConcurrentCalls: number;
+  retryAttempts: number;
+  retryInterval: number;
+  callTimeout: number;
+}
+
+// Separate interface for new campaign form (all fields required)
+export interface NewCampaignFormData {
+  name: string;
+  description: string;
+  type: 'bulk' | 'scheduled' | 'triggered';
   audioFileId: number;
+  priority: number;
+  maxConcurrentCalls: number;
+  retryAttempts: number;
+  retryInterval: number;
+  callTimeout: number;
+}
+
+// Separate interface for edit campaign form (audioFileId optional)
+export interface EditCampaignFormData {
+  name: string;
+  description: string;
+  type: 'bulk' | 'scheduled' | 'triggered';
   priority: number;
   maxConcurrentCalls: number;
   retryAttempts: number;

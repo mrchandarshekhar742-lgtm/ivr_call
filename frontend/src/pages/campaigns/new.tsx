@@ -8,7 +8,7 @@ import Layout from '@/components/Layout';
 import { apiClient } from '@/utils/api';
 import { toast } from 'react-hot-toast';
 import { PlayIcon, PauseIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline';
-import { CampaignFormData } from '@/types';
+import { NewCampaignFormData } from '@/types';
 
 const schema = yup.object({
   name: yup
@@ -73,7 +73,7 @@ export default function NewCampaignPage() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<CampaignFormData>({
+  } = useForm<NewCampaignFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       type: 'bulk',
@@ -106,7 +106,7 @@ export default function NewCampaignPage() {
     audio.onended = () => setPlayingAudio(null);
   };
 
-  const onSubmit = async (data: CampaignFormData) => {
+  const onSubmit = async (data: NewCampaignFormData) => {
     try {
       setIsLoading(true);
 

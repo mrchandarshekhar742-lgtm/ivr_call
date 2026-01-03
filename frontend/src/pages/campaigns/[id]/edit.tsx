@@ -11,15 +11,16 @@ import {
 } from '@heroicons/react/24/outline';
 import Layout from '@/components/Layout';
 import { apiClient } from '@/utils/api';
-import { Campaign, CampaignFormData } from '@/types';
+import { Campaign, EditCampaignFormData } from '@/types';
 
 const schema = yup.object({
   name: yup.string().required('Campaign name is required'),
-  description: yup.string(),
+  description: yup.string().required('Description is required'),
   type: yup.string().oneOf(['bulk', 'scheduled', 'triggered']).required('Campaign type is required'),
   priority: yup.number().min(1).max(10).required('Priority is required'),
   maxConcurrentCalls: yup.number().min(1).max(100).required('Max concurrent calls is required'),
   retryAttempts: yup.number().min(0).max(10).required('Retry attempts is required'),
+  retryInterval: yup.number().min(30).max(3600).required('Retry interval is required'),
   callTimeout: yup.number().min(30).max(1800).required('Call timeout is required'),
 });
 
@@ -34,7 +35,7 @@ export default function EditCampaignPage() {
     formState: { errors },
     reset,
     setValue,
-  } = useForm<CampaignFormData>({
+  } = useForm<EditCampaignFormData>({
     resolver: yupResolver(schema),
   });
 
@@ -47,7 +48,7 @@ export default function EditCampaignPage() {
 
   // Update campaign mutation
   const updateMutation = useMutation({
-    mutationFn: (data: CampaignFormData) => 
+    mutationFn: (data: EditCampaignFormData) => 
       apiClient.put(`/api/campaigns/${id}`, data),
     onSuccess: () => {
       toast.success('Campaign updated successfully!');
@@ -55,7 +56,7 @@ export default function EditCampaignPage() {
       queryClient.invalidateQueries({ queryKey: ['campaign', id] });
       router.push('/campaigns');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to update campaign');
     },
   });
@@ -71,12 +72,13 @@ export default function EditCampaignPage() {
         priority: campaignData.config?.priority || 5,
         maxConcurrentCalls: campaignData.config?.maxConcurrentCalls || 10,
         retryAttempts: campaignData.config?.retryAttempts || 3,
+        retryInterval: campaignData.config?.retryInterval || 300,
         callTimeout: campaignData.config?.callTimeout || 300,
       });
     }
   }, [campaign, reset]);
 
-  const onSubmit = (data: CampaignFormData) => {
+  const onSubmit = (data: EditCampaignFormData) => {
     updateMutation.mutate(data);
   };
 
@@ -241,8 +243,23 @@ export default function EditCampaignPage() {
                   )}
                 </div>
 
+                {/* Retry Interval */}
+                <div>
+                  <label className="form-label">Retry Interval (seconds)</label>
+                  <input
+                    type="number"
+                    min="30"
+                    max="3600"
+                    {...register('retryInterval')}
+                    className={`form-input ${errors.retryInterval ? 'border-error-300' : ''}`}
+                  />
+                  {errors.retryInterval && (
+                    <p className="form-error">{errors.retryInterval.message}</p>
+                  )}
+                </div>
+
                 {/* Call Timeout */}
-                <div className="md:col-span-2">
+                <div>
                   <label className="form-label">Call Timeout (seconds)</label>
                   <input
                     type="number"
