@@ -27,6 +27,22 @@ import { Campaign } from '@/types';
 import { formatNumber, formatDuration } from '@/utils/format';
 import io from 'socket.io-client';
 
+// Add interface for call progress
+interface CallProgress {
+  id: any;
+  phone: any;
+  status: string;
+  startTime: string;
+}
+
+// Add interface for real-time stats
+interface RealTimeStats {
+  activeCalls: number;
+  completedCalls: number;
+  dtmfResponses: { [key: string]: number };
+  currentCallProgress: CallProgress[];
+}
+
 export default function CampaignDetailPage() {
   const router = useRouter();
   const { id } = router.query;

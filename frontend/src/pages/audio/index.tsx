@@ -26,6 +26,9 @@ interface AudioCardProps {
 }
 
 function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: AudioCardProps) {
+  // Safety checks for audio object and its properties
+  if (!audio) return null;
+  
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'welcome': return 'bg-green-100 text-green-800';
@@ -46,6 +49,14 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
     }
   };
 
+  // Safe property access with defaults
+  const category = audio.category || 'unknown';
+  const processingStatus = audio.processing?.status || 'unknown';
+  const fileSize = audio.file?.size || audio.size || 0;
+  const fileDuration = audio.file?.duration || null;
+  const tags = audio.tags || [];
+  const usage = audio.usage || { campaignCount: 0, totalPlays: 0, lastUsed: null };
+
   return (
     <div className="card">
       <div className="card-body">
@@ -54,26 +65,26 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
             <div className="flex items-center">
               <MusicalNoteIcon className="h-5 w-5 text-gray-400 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">{audio.name}</h3>
-              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(audio.category)}`}>
-                {audio.category}
+              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(category)}`}>
+                {category}
               </span>
-              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(audio.processing?.status || 'unknown')}`}>
-                {audio.processing?.status || 'unknown'}
+              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(processingStatus)}`}>
+                {processingStatus}
               </span>
             </div>
             {audio.description && (
               <p className="mt-1 text-sm text-gray-500">{audio.description}</p>
             )}
             <div className="mt-2 flex items-center text-sm text-gray-500">
-              <span>{formatFileSize(audio.file.size)}</span>
+              <span>{formatFileSize(fileSize)}</span>
               <span className="mx-2">•</span>
-              <span>{audio.file.duration ? `${Math.round(audio.file.duration)}s` : 'Unknown duration'}</span>
+              <span>{fileDuration ? `${Math.round(fileDuration)}s` : 'Unknown duration'}</span>
               <span className="mx-2">•</span>
               <span>Uploaded {formatDate(audio.createdAt)}</span>
             </div>
-            {audio.tags.length > 0 && (
+            {tags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
-                {audio.tags.map((tag: string) => (
+                {tags.map((tag: string) => (
                   <span
                     key={tag}
                     className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800"
@@ -85,7 +96,7 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
             )}
           </div>
           <div className="flex items-center space-x-2">
-            {audio.processing.status === 'ready' && (
+            {processingStatus === 'ready' && (
               <>
                 <button
                   onClick={() => isPlaying ? onPause(audio.id) : onPlay(audio.id)}
@@ -118,19 +129,19 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-lg font-semibold text-gray-900">
-              {audio.usage.campaignCount}
+              {usage.campaignCount}
             </div>
             <div className="text-xs text-gray-500">Campaigns</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-semibold text-gray-900">
-              {audio.usage.totalPlays}
+              {usage.totalPlays}
             </div>
             <div className="text-xs text-gray-500">Total Plays</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-semibold text-gray-900">
-              {audio.usage.lastUsed ? formatDate(audio.usage.lastUsed) : 'Never'}
+              {usage.lastUsed ? formatDate(usage.lastUsed) : 'Never'}
             </div>
             <div className="text-xs text-gray-500">Last Used</div>
           </div>

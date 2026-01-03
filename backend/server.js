@@ -23,9 +23,11 @@ const io = socketIo(server, {
       "http://localhost:3000"
     ],
     methods: ["GET", "POST"],
-    credentials: true
+    credentials: true,
+    allowedHeaders: ["*"]
   },
-  allowEIO3: true
+  allowEIO3: true,
+  transports: ['websocket', 'polling']
 });
 
 // Make io available to routes
@@ -1336,6 +1338,54 @@ app.get('/api/audio/:id', authenticateToken, (req, res) => {
 
 // Upload audio file
 app.post('/api/audio/upload', authenticateToken, upload.single('audioFile'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: 'Audio file is required'
+    });
+  }
+
+  const newAudioFile = {
+    id: audioFiles.length + 1,
+    name: req.body.name || req.file.originalname,
+    filename: req.file.filename,
+    originalName: req.file.originalname,
+    mimeType: req.file.mimetype,
+    size: req.file.size,
+    url: `/uploads/audio/${req.file.filename}`,
+    category: req.body.category || 'general',
+    description: req.body.description || '',
+    tags: req.body.tags ? req.body.tags.split(',').map(tag => tag.trim()) : [],
+    file: {
+      size: req.file.size,
+      duration: null // Will be calculated later
+    },
+    processing: {
+      status: 'ready'
+    },
+    usage: {
+      campaignCount: 0,
+      totalPlays: 0,
+      lastUsed: null
+    },
+    uploadedBy: req.user.id,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  audioFiles.push(newAudioFile);
+
+  logger.info(`Audio file uploaded: ${newAudioFile.name}`);
+
+  res.status(201).json({
+    success: true,
+    message: 'Audio file uploaded successfully',
+    data: newAudioFile
+  });
+});
+
+// Upload audio file (alternative endpoint for frontend compatibility)
+app.post('/api/audio', authenticateToken, upload.single('audioFile'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       success: false,
