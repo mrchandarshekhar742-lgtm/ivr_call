@@ -73,7 +73,7 @@ function AudioCard({ audio, onPlay, onPause, onDownload, onDelete, isPlaying }: 
             </div>
             {audio.tags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
-                {audio.tags.map((tag) => (
+                {audio.tags.map((tag: string) => (
                   <span
                     key={tag}
                     className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800"
@@ -183,7 +183,7 @@ export default function AudioPage() {
         isPublic: false
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to upload audio file');
     },
   });
@@ -195,7 +195,7 @@ export default function AudioPage() {
       toast.success('Audio file deleted successfully!');
       queryClient.invalidateQueries({ queryKey: ['audio'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || 'Failed to delete audio file');
     },
   });
@@ -278,7 +278,7 @@ export default function AudioPage() {
     return audio.category === filter;
   });
 
-  const categoryCounts = audioFiles.reduce((acc, audio) => {
+  const categoryCounts = audioFiles.reduce((acc: Record<string, number>, audio: AudioFile) => {
     acc[audio.category] = (acc[audio.category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -287,7 +287,7 @@ export default function AudioPage() {
     return (
       <Layout title="Audio Files">
         <div className="animate-pulse space-y-4">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(3)].map((_: undefined, i: number) => (
             <div key={i} className="card">
               <div className="card-body">
                 <div className="h-24 bg-gray-200 rounded"></div>
@@ -360,7 +360,7 @@ export default function AudioPage() {
               </div>
             </div>
           ) : (
-            filteredAudioFiles.map((audio) => (
+            filteredAudioFiles.map((audio: AudioFile) => (
               <AudioCard
                 key={audio.id}
                 audio={audio}
@@ -452,7 +452,7 @@ export default function AudioPage() {
                   </label>
                   <select
                     value={uploadForm.category}
-                    onChange={(e) => setUploadForm(prev => ({ ...prev, category: e.target.value as any }))}
+                    onChange={(e) => setUploadForm(prev => ({ ...prev, category: e.target.value as 'welcome' | 'menu' | 'goodbye' | 'error' | 'hold' | 'transfer' | 'custom' }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="welcome">Welcome</option>
